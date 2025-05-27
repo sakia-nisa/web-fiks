@@ -36,7 +36,6 @@ $result = mysqli_query($connection, "
                   <th>Sub Pembayaran</th>
                   <th>Diskon</th>
                   <th>Total</th>
-                  <th style="width: 150">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,16 +54,6 @@ $result = mysqli_query($connection, "
                     <td><?= $data['sub_pembayaran'] ?></td>
                     <td><?= $data['diskon'] ?></td>
                     <td><?= $data['total'] ?></td>
-                    <td>
-                      <div class="d-flex gap-1">
-                      <a class="btn btn-sm btn-danger mb-md-0 mb-1" href="delete.php?id_transaksi=<?= $data['id_transaksi'] ?>">
-                        <i class="fas fa-trash fa-fw"></i>
-                      </a>
-                      <a class="btn btn-sm btn-info" href="edit.php?id_transaksi=<?= $data['id_transaksi'] ?>">
-                        <i class="fas fa-edit fa-fw"></i>
-                      </a>
-                      </div>
-                    </td>
                   </tr>
 
                 <?php
