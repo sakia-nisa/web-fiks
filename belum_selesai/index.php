@@ -2,13 +2,21 @@
 require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
-$result = mysqli_query($connection, "SELECT * FROM matakuliah");
+$result = mysqli_query($connection, "
+  SELECT 
+    transaksi.*, 
+    pelanggan.nama AS nama_pelanggan, 
+    cabang.nama_cabang 
+  FROM transaksi
+  JOIN pelanggan ON transaksi.id_pelanggan = pelanggan.id_pelanggan
+  JOIN cabang ON transaksi.id_cabang = cabang.id_cabang
+");
 ?>
 
 <section class="section">
   <div class="section-header d-flex justify-content-between">
-    <h1>List Mata Kuliah</h1>
-    <a href="matakuliah/create.php" class="btn btn-primary">Tambah Data</a>
+    <h1>Data Transaksi Belum Selesai</h1>
+    <a href="./create.php" class="btn btn-primary">Tambah Data</a>
   </div>
   <div class="row">
     <div class="col-12">
@@ -18,9 +26,16 @@ $result = mysqli_query($connection, "SELECT * FROM matakuliah");
             <table class="table table-hover table-striped w-100" id="table-1">
               <thead>
                 <tr>
-                  <th>Kode Matkul</th>
-                  <th>Matakuliah</th>
-                  <th>SKS</th>
+                  <th>No Transaksi</th>
+                  <th>Nama Pelanggan</th>
+                  <th>Cabang</th>
+                  <th>Tanggal Masuk</th>
+                  <th>Estimasi Pengambilan</th>
+                  <th>Status</th>
+                  <th>Jenis Pembayaran</th>
+                  <th>Sub Pembayaran</th>
+                  <th>Diskon</th>
+                  <th>Total</th>
                   <th style="width: 150">Aksi</th>
                 </tr>
               </thead>
@@ -28,17 +43,27 @@ $result = mysqli_query($connection, "SELECT * FROM matakuliah");
                 <?php
                 while ($data = mysqli_fetch_array($result)) :
                 ?>
+
                   <tr>
-                    <td><?= $data['kode_matkul'] ?></td>
-                    <td><?= $data['nama_matkul'] ?></td>
-                    <td><?= $data['sks'] ?></td>
+                    <td><?= $data['id_transaksi'] ?></td>
+                    <td><?= $data['nama_pelanggan'] ?></td>
+                    <td><?= $data['nama_cabang'] ?></td>
+                    <td><?= $data['tanggal_masuk'] ?></td>
+                    <td><?= $data['estimasi_pengambilan'] ?></td>
+                    <td><?= $data['status'] ?></td>
+                    <td><?= $data['jenis_pembayaran'] ?></td>
+                    <td><?= $data['sub_pembayaran'] ?></td>
+                    <td><?= $data['diskon'] ?></td>
+                    <td><?= $data['total'] ?></td>
                     <td>
-                      <a class="btn btn-sm btn-danger mb-md-0 mb-1" href="delete.php?kode_matkul=<?= $data['kode_matkul'] ?>">
-                        <i class="fas fa-trash fa-fw">Hapus</i>
+                      <div class="d-flex gap-1">
+                      <a class="btn btn-sm btn-danger mb-md-0 mb-1" href="delete.php?id_transaksi=<?= $data['id_transaksi'] ?>">
+                        <i class="fas fa-trash fa-fw"></i>
                       </a>
-                      <a class="btn btn-sm btn-info" href="edit.php?kode_matkul=<?= $data['kode_matkul'] ?>">
-                        <i class="fas fa-edit fa-fw">Edit</i>
+                      <a class="btn btn-sm btn-info" href="edit.php?id_transaksi=<?= $data['id_transaksi'] ?>">
+                        <i class="fas fa-edit fa-fw"></i>
                       </a>
+                      </div>
                     </td>
                   </tr>
 
@@ -87,4 +112,4 @@ if (isset($_SESSION['info'])) :
   $_SESSION['info'] = null;
 endif;
 ?>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+<script src="../assets/js/page/modules-datatables.js"></script>
