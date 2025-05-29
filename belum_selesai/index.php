@@ -30,7 +30,7 @@ $result = mysqli_query($connection, "
                   <th>Cabang</th>
                   <th>Tanggal Masuk</th>
                   <th>Jumlah Pakaian</th>
-                  <th>Status Pembayaran</th>
+                  <th>Pembayaran</th>
                   <th>Sub Pembayaran</th>
                   <th>Diskon</th>
                   <th>Cash</th>
@@ -52,10 +52,16 @@ $result = mysqli_query($connection, "
                     <td><?= $data['cash'] ?></td>
                     <td><?= $data['total'] ?></td>
                     <td>
-                      <a class="btn btn-sm btn-dark mb-md-0 mb-1" href="../penjualan/index.php?id_penjualan=<?= $data['id_penjualan'] ?>">
+                      <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                        <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                        <a class="btn btn-sm btn-dark " href="../penjualan/index.php?id_penjualan=<?= $data['id_penjualan'] ?>">
                         <i class="fas fa-check"></i>
                       </a>
+                      </div>
                     </td>
+
                   </tr>
                 <?php endwhile; ?>
               </tbody>

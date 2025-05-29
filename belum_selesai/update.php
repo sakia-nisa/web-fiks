@@ -2,20 +2,20 @@
 session_start();
 require_once '../helper/connection.php';
 
-$id_transaksi = $_POST['id_transaksi'];
+$id_penjualan = $_POST['id_penjualan'];
 $id_pelanggan = $_POST['id_pelanggan'];
-$id_cabang = $_POST['id_cabang'];
+$cabang = $_POST['cabang'];
 $tanggal_masuk = $_POST['tanggal_masuk'];
-$estimasi_pengambilan = $_POST['estimasi_pengambilan'];
-$status = $_POST['status'];
-$jenis_pembayaran = $_POST['jenis_pembayaran'];
-$sub_pembayaran = $_POST['status_pembayaran'];
+$jumlah_pakaian = $_POST['jumlah_pakaian'];
+$pembayaran = $_POST['pembayaran'] ?? null;
+$sub_pembayaran = $_POST['sub_pembayaran'] ?? null;
 $diskon = $_POST['diskon'];
+$cash = $_POST['cash'];
 $total = $_POST['total'];
 
-$query = mysqli_query($connection, "UPDATE transaksi SET id_transaksi = '$id_transaksi', id_pelanggan = '$id_pelanggan', id_cabang = '$id_cabang', 
-tanggal_masuk = '$tanggal_masuk', estimasi_pengambilan = '$estimasi_pengambilan', status = '$status', jenis_pembayaran = '$jenis_pembayaran', sub_pembayaran = '$sub_pembayaran', 
-diskon = '$diskon', total = $_POST['total'] WHERE id_transaksi = '$id_transaksi'");
+$query = mysqli_query($connection, "UPDATE penjualan SET id_penjualan = '$id_penjualan', id_pelanggan = '$id_pelanggan', cabang = '$cabang', 
+tanggal_masuk = '$tanggal_masuk', jumlah_pakaian = '$jumlah_pakaian', pembayaran = '$pembayaran', sub_pembayaran = '$sub_pembayaran', 
+diskon = '$diskon', cash = '$cash', total = '$total' WHERE id_penjualan = '$id_penjualan'");
 if ($query) {
   $_SESSION['info'] = [
     'status' => 'success',
