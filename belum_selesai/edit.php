@@ -45,8 +45,9 @@ $query = mysqli_query($connection, "SELECT * FROM penjualan WHERE id_penjualan='
                 <td>Pembayaran </td>
                 <td>
                   <select name="pembayaran" class="form-control" required>
-                    <option value="depan" <?= $row['pembayaran'] == 'depan' ? 'selected' : '' ?>>Depan</option>
-                    <option value="nanti" <?= $row['pembayaran'] == 'nanti' ? 'selected' : '' ?>>Nanti</option>
+                      <option value="" selected disabled>--Pilih Pembayaran--</option>
+                      <option value="Depan">Depan</option>
+                      <option value="Nanti">Nanti</option>
                   </select>
                 </td>
               </tr>
