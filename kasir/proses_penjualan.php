@@ -4,11 +4,12 @@ require_once '../helper/connection.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die('Akses tidak sah!');
 }
-
+session_start();
+$id_user = $_SESSION['id_user'] ?? null;
 try {
     mysqli_autocommit($connection, false);
     $id_pelanggan = null;
-
+    
     $cabang = mysqli_real_escape_string($connection, trim($_POST['cabang'] ?? ''));
     $statusPelanggan = mysqli_real_escape_string($connection, $_POST['statusPelanggan'] ?? '');
     $tanggal_masuk = mysqli_real_escape_string($connection, $_POST['tanggal_masuk'] ?? '');
@@ -88,9 +89,9 @@ try {
         }
     }
 
-    // Jangan isi id_penjualan secara manual
-    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, cash, total)
-                        VALUES ('$id_pelanggan', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$cash', '$total')";
+    //Memasukkan Orderan
+    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, cash, total, id_user)
+                        VALUES ('$id_pelanggan', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$cash', '$total', '$id_user')";
 
     if (!mysqli_query($connection, $insertPenjualan)) {
         throw new Exception('Gagal menyimpan data penjualan: ' . mysqli_error($connection));
@@ -121,7 +122,7 @@ try {
 
     mysqli_commit($connection);
     mysqli_autocommit($connection, true);
-    header('Location: index.php?success=1&id=' . $id_penjualan);
+    header('Location: struk.php?success=1&id=' . $id_penjualan);
     exit;
 
 } catch (Exception $e) {
