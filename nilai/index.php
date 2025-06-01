@@ -2,7 +2,11 @@
 require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
-$result = mysqli_query($connection, "SELECT * FROM penjualan");
+$sql = "SELECT p.id_penjualan, pl.nama AS nama_pelanggan, p.cabang, p.tanggal_masuk, 
+               p.jumlah_pakaian, p.pembayaran, p.sub_pembayaran, p.diskon, p.cash, p.total
+        FROM penjualan p
+        JOIN pelanggan pl ON p.id_pelanggan = pl.id_pelanggan";
+$result = mysqli_query($connection, $sql);
 ?>
 
 <section class="section">
@@ -36,7 +40,7 @@ $result = mysqli_query($connection, "SELECT * FROM penjualan");
 
                   <tr>
                     <td><?= $data['id_penjualan'] ?></td>
-                    <td><?= $data['id_pelanggan'] ?></td>
+                    <td><?= $data['nama_pelanggan'] ?></td>
                     <td><?= $data['cabang'] ?></td>
                     <td><?= $data['tanggal_masuk'] ?></td>
                     <td><?= $data['jumlah_pakaian']?></td>
