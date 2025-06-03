@@ -99,7 +99,7 @@ if (isset($_POST['submit'])) {
               </div>
             </div>
             <div class="simple-footer">
-              UIN WS
+              NN Laundry
             </div>
           </div>
         </div>

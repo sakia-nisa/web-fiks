@@ -13,7 +13,10 @@
       <li><a class="nav-link" href="../"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
       <li class="menu-header">Menu Penjualan</li>
       <li class="dropdown">
-        <a href=".." class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa fa-bookmark"></i> <span>Belum Selesai</span></a>
+        <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa fa-bookmark"></i> <span>Belum Selesai</span></a>
+        <ul class="dropdown-menu">
+          <li><a class="nav-link" href="../belum_selesai/index.php">List Data</a></li>
+        </ul>
       </li>
       <li class="dropdown">
         <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa fa-calculator"></i> <span>Kasir</span></a>
@@ -24,12 +27,8 @@
       <li class="dropdown">
         <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa fa-credit-card"></i> <span>Penjualan</span></a>
         <ul class="dropdown-menu">
-          <li><a class="nav-link" href="../nilai/index.php">List</a></li>
-          <li><a class="nav-link" href="../nilai/create.php">Tambah Data</a></li>
+          <li><a class="nav-link" href="../penjualan/index.php">List</a></li>>
         </ul>
       </li>
-      <li class="menu-header">Akuntansi</li>
-      <li><a class="nav-link" href="../"><i class="fas fa-fire"></i> <span>Pengeluaran</span></a></li>
-    </ul>
   </aside>
 </div>

@@ -2,13 +2,20 @@
 require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
-$result = mysqli_query($connection, "SELECT * FROM matakuliah");
+$result = mysqli_query($connection, "
+  SELECT 
+    penjualan.*, 
+    pelanggan.nama AS nama_pelanggan, 
+    cabang.nama_cabang 
+  FROM penjualan
+  JOIN pelanggan ON penjualan.id_pelanggan = pelanggan.id_pelanggan
+  JOIN cabang ON penjualan.cabang = cabang.nama_cabang
+");
 ?>
 
 <section class="section">
   <div class="section-header d-flex justify-content-between">
-    <h1>List Mata Kuliah</h1>
-    <a href="matakuliah/create.php" class="btn btn-primary">Tambah Data</a>
+    <h1>Data Transaksi Penjualan</h1>
   </div>
   <div class="row">
     <div class="col-12">
@@ -18,33 +25,45 @@ $result = mysqli_query($connection, "SELECT * FROM matakuliah");
             <table class="table table-hover table-striped w-100" id="table-1">
               <thead>
                 <tr>
-                  <th>Kode Matkul</th>
-                  <th>Matakuliah</th>
-                  <th>SKS</th>
+                  <th>No Penjualan</th>
+                  <th>Nama Pelanggan</th>
+                  <th>Cabang</th>
+                  <th>Tanggal Masuk</th>
+                  <th>Jumlah Pakaian</th>
+                  <th>Pembayaran</th>
+                  <th>Sub Pembayaran</th>
+                  <th>Diskon</th>
+                  <th>Cash</th>
+                  <th>Total</th>
                   <th style="width: 150">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                <?php
-                while ($data = mysqli_fetch_array($result)) :
-                ?>
+                <?php while ($data = mysqli_fetch_array($result)) : ?>
                   <tr>
-                    <td><?= $data['kode_matkul'] ?></td>
-                    <td><?= $data['nama_matkul'] ?></td>
-                    <td><?= $data['sks'] ?></td>
+                    <td><?= $data['id_penjualan'] ?></td>
+                    <td><?= $data['nama_pelanggan'] ?></td>
+                    <td><?= $data['nama_cabang'] ?></td>
+                    <td><?= $data['tanggal_masuk'] ?></td>
+                    <td><?= $data['jumlah_pakaian'] ?></td>
+                    <td><?= ucfirst($data['pembayaran']) ?></td>
+                    <td><?= $data['sub_pembayaran'] ?></td>
+                    <td><?= $data['diskon'] ?></td>
+                    <td><?= $data['cash'] ?></td>
+                    <td><?= $data['total'] ?></td>
                     <td>
-                      <a class="btn btn-sm btn-danger mb-md-0 mb-1" href="delete.php?kode_matkul=<?= $data['kode_matkul'] ?>">
-                        <i class="fas fa-trash fa-fw">Hapus</i>
+                      <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                        <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
+                        <i class="fas fa-edit"></i>
                       </a>
-                      <a class="btn btn-sm btn-info" href="edit.php?kode_matkul=<?= $data['kode_matkul'] ?>">
-                        <i class="fas fa-edit fa-fw">Edit</i>
+                        <a class="btn btn-sm btn-dark " href="../penjualan/index.php?id_penjualan=<?= $data['id_penjualan'] ?>">
+                        <i class="fas fa-check"></i>
                       </a>
+                      </div>
                     </td>
-                  </tr>
 
-                <?php
-                endwhile;
-                ?>
+                  </tr>
+                <?php endwhile; ?>
               </tbody>
             </table>
           </div>
@@ -56,35 +75,18 @@ $result = mysqli_query($connection, "SELECT * FROM matakuliah");
 <?php
 require_once '../layout/_bottom.php';
 ?>
-<!-- Page Specific JS File -->
-<?php
-if (isset($_SESSION['info'])) :
-  if ($_SESSION['info']['status'] == 'success') {
-?>
-    <script>
-      iziToast.success({
-        title: 'Sukses',
-        message: `<?= $_SESSION['info']['message'] ?>`,
-        position: 'topCenter',
-        timeout: 5000
-      });
-    </script>
-  <?php
-  } else {
-  ?>
-    <script>
-      iziToast.error({
-        title: 'Gagal',
-        message: `<?= $_SESSION['info']['message'] ?>`,
-        timeout: 5000,
-        position: 'topCenter'
-      });
-    </script>
-<?php
-  }
 
-  unset($_SESSION['info']);
-  $_SESSION['info'] = null;
-endif;
-?>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+<!-- Page Specific JS File -->
+<?php if (isset($_SESSION['info'])) : ?>
+  <script>
+    iziToast.<?= $_SESSION['info']['status'] === 'success' ? 'success' : 'error' ?>({
+      title: '<?= $_SESSION['info']['status'] === 'success' ? 'Sukses' : 'Gagal' ?>',
+      message: `<?= $_SESSION['info']['message'] ?>`,
+      position: 'topCenter',
+      timeout: 5000
+    });
+  </script>
+  <?php unset($_SESSION['info']); ?>
+<?php endif; ?>
+
+<script src="../assets/js/page/modules-datatables.js"></script>

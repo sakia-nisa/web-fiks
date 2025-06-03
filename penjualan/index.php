@@ -2,13 +2,12 @@
 require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
-$result = mysqli_query($connection, "SELECT * FROM nilai");
+$result = mysqli_query($connection, "SELECT * FROM penjualan");
 ?>
 
 <section class="section">
   <div class="section-header d-flex justify-content-between">
-    <h1>List Nilai Mahasiswa</h1>
-    <a href="./create.php" class="btn btn-primary">Tambah Data Nilai</a>
+    <h1>List Penjualan</h1>
   </div>
   <div class="row">
     <div class="col-12">
@@ -18,12 +17,16 @@ $result = mysqli_query($connection, "SELECT * FROM nilai");
             <table class="table table-hover table-striped w-100" id="table-1">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>NIM</th>
-                  <th>Kode Matkul</th>
-                  <th>Semester</th>
-                  <th>Nilai</th>
-                  <th style="width: 150">Aksi</th>
+                  <th>ID Penjualan</th>
+                  <th>Pelanggan</th>
+                  <th>Cabang</th>
+                  <th>Tanggal Masuk</th>
+                  <th>Jumlah Pakaian</th>
+                  <th>Pembayaran</th>
+                  <th>Sub Pembayaran</th>
+                  <th>Diskon</th>
+                  <th>Cash</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -32,19 +35,16 @@ $result = mysqli_query($connection, "SELECT * FROM nilai");
                 ?>
 
                   <tr>
-                    <td><?= $data['id'] ?></td>
-                    <td><?= $data['nim'] ?></td>
-                    <td><?= $data['kode_matkul'] ?></td>
-                    <td><?= $data['semester'] ?></td>
-                    <td><?= $data['nilai']?></td>
-                    <td>
-                      <a class="btn btn-sm btn-danger mb-md-0 mb-1" href="delete.php?id=<?= $data['id'] ?>">
-                        <i class="fas fa-trash fa-fw"></i>
-                      </a>
-                      <a class="btn btn-sm btn-info" href="edit.php?id=<?= $data['id'] ?>">
-                        <i class="fas fa-edit fa-fw"></i>
-                      </a>
-                    </td>
+                    <td><?= $data['id_penjualan'] ?></td>
+                    <td><?= $data['id_pelanggan'] ?></td>
+                    <td><?= $data['cabang'] ?></td>
+                    <td><?= $data['tanggal_masuk'] ?></td>
+                    <td><?= $data['jumlah_pakaian']?></td>
+                    <td><?= $data['pembayaran'] ?></td>
+                    <td><?= $data['sub_pembayaran'] ?></td>
+                    <td><?= $data['diskon'] ?></td>
+                    <td><?= $data['cash']?></td>
+                    <td><?= $data['total']?></td>
                   </tr>
 
                 <?php

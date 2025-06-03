@@ -5,7 +5,7 @@ require_once '../helper/connection.php';
 $q_total_pelanggan = mysqli_query($connection, "SELECT COUNT(*) as total FROM pelanggan");
 $pelanggan_terdaftar = mysqli_fetch_assoc($q_total_pelanggan)['total'];
 $today = date('Y-m-d');
-$q_pelanggan_hari_ini = mysqli_query($connection, "SELECT COUNT(*) as total FROM transaksi WHERE DATE(tanggal_masuk) = '$today'");
+$q_pelanggan_hari_ini = mysqli_query($connection, "SELECT COUNT(*) as total FROM penjualan WHERE DATE(tanggal_masuk) = '$today'");
 $pelanggan_hari_ini = mysqli_fetch_assoc($q_pelanggan_hari_ini)['total'];
 $deposit = $deposit = mysqli_query($connection, "SELECT deposit.*, pelanggan.nama FROM deposit JOIN pelanggan ON deposit.id_pelanggan = pelanggan.id_pelanggan");
 $pegawai = mysqli_query($connection, "SELECT pegawai.*, cabang.nama_cabang,(SELECT COUNT(*) FROM transaksi WHERE transaksi.id_pegawai = pegawai.id_pegawai AND DATE(transaksi.tanggal_masuk) = CURDATE() ) AS total_pengerjaan FROM pegawai JOIN cabang ON pegawai.id_cabang = cabang.id_cabang");
