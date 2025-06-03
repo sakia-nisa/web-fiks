@@ -9,13 +9,14 @@ $q_pelanggan_hari_ini = mysqli_query($connection, "SELECT COUNT(*) as total FROM
 $pelanggan_hari_ini = mysqli_fetch_assoc($q_pelanggan_hari_ini)['total'];
 $deposit = $deposit = mysqli_query($connection, "SELECT deposit.*, pelanggan.nama FROM deposit JOIN pelanggan ON deposit.id_pelanggan = pelanggan.id_pelanggan");
 $pegawai = mysqli_query($connection, "
-  SELECT pegawai.*, cabang.nama_cabang, users.total_pengerjaan
+  SELECT 
+    pegawai.*, 
+    cabang.nama_cabang,
+    users.total_pengerjaan
   FROM pegawai
   JOIN cabang ON pegawai.id_cabang = cabang.id_cabang
   LEFT JOIN users ON users.id_pegawai = pegawai.id_pegawai
 ");
-
-
 ?>
 
 <section class="section">

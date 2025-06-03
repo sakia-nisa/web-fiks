@@ -4,7 +4,6 @@ require_once '../helper/connection.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die('Akses tidak sah!');
 }
-session_start();
 $id_user = $_SESSION['id_user'] ?? null;
 try {
     mysqli_autocommit($connection, false);
