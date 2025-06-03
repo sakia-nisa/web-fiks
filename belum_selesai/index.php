@@ -7,10 +7,11 @@ $result = mysqli_query($connection, "
   FROM penjualan
   JOIN penjualan_detail ON penjualan.id_penjualan = penjualan_detail.id_penjualan
   JOIN pelanggan ON penjualan.id_pelanggan = pelanggan.id_pelanggan
-  WHERE penjualan_detail.estimasi_pengambilan IS NOT NULL 
-  AND penjualan_detail.status != 'selesai'
+  WHERE penjualan_detail.estimasi_pengambilan IS NOT NULL
+    AND penjualan_detail.status != 'selesai'
   ORDER BY penjualan_detail.estimasi_pengambilan DESC
 ");
+
 ?>
 
 <section class="section">
@@ -46,7 +47,7 @@ $result = mysqli_query($connection, "
                     <td><?= $data['cabang'] ?></td>
                     <td><?= $data['tanggal_masuk'] ?></td>
                     <td><?= $data['jumlah_pakaian'] ?></td>
-                    <td><?= ucfirst($data['pembayaran']) ?></td>
+                    <td><?= $data['pembayaran']?></td>
                     <td><?= $data['sub_pembayaran'] ?></td>
                     <td><?= $data['diskon'] ?></td>
                     <td><?= $data['cash'] ?></td>
@@ -56,8 +57,8 @@ $result = mysqli_query($connection, "
                         <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
                         <i class="fas fa-edit"></i>
                       </a>
-                        <a class="btn btn-sm btn-dark" href="../penjualan/selesaikan.php?id_penjualan=<?= $data['id_penjualan'] ?>" onclick="return confirm('Tandai pesanan ini sebagai selesai?')">
-                          <i class="fas fa-check"></i></a>
+                      <a class="btn btn-sm btn-dark" href="../penjualan/selesaikan.php?id_penjualan=<?= $data['id_penjualan'] ?>" onclick="return confirm('Tandai pesanan ini sebagai selesai?')">
+                        <i class="fas fa-check"></i>
                       </a>
                       </div>
                     </td>
