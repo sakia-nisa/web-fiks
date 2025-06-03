@@ -44,10 +44,10 @@ $query = mysqli_query($connection, "SELECT * FROM penjualan WHERE id_penjualan='
                 <tr>
                 <td>Pembayaran </td>
                 <td>
-                  <select class="form-control" name="pembayaran" id="pembayaran" required>
-                    <option value="">--Pilih Status--</option>
-                    <option value="bayar_nanti">Bayar Nanti</option>
-                    <option value="Bayar_didepan">Bayar Di Depan</option>
+                  <select name="pembayaran" class="form-control" required>
+                      <option value="" selected disabled>--Pilih Pembayaran--</option>
+                      <option value="Depan">Depan</option>
+                      <option value="Nanti">Nanti</option>
                   </select>
                 </td>
               </tr>
@@ -55,7 +55,7 @@ $query = mysqli_query($connection, "SELECT * FROM penjualan WHERE id_penjualan='
                 <td>Sub Pembayaran</td>
                 <td>
                   <select class="form-control" name="sub_pembayaran" id="sub_pembayaran" required>
-                    <option value="">--Pilih Sub Pembayaran--</option>
+                    <option value="" disabled selected>--Pilih Sub Pembayaran--</option>
                     <option value="edc">EDC</option>
                     <option value="gopay">Gopay</option>
                     <option value="tunai">Tunai</option>
@@ -74,7 +74,7 @@ $query = mysqli_query($connection, "SELECT * FROM penjualan WHERE id_penjualan='
                 </tr>
                 <tr>
                   <td>Total</td>
-                  <td><input class="form-control" type="number" name="total" size="20" required value="<?= $row['total'] ?>"></td>
+                  <td><input class="form-control" type="number" id="total" name="total" readonly size="20" required value="<?= $row['total'] ?>"></td>
                 </tr>
                 <tr>
                   <td>
@@ -89,8 +89,24 @@ $query = mysqli_query($connection, "SELECT * FROM penjualan WHERE id_penjualan='
         </div>
       </div>
     </div>
-</section>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const diskonInput = document.querySelector('input[name="diskon"]');
+          const totalInput = document.querySelector('input[name="total"]');
 
+          const diskonAwal = parseInt(diskonInput.value) || 0;
+          const totalAwal = parseInt(totalInput.value) || 0;
+
+          diskonInput.addEventListener('input', function () {
+              const diskonBaru = parseInt(diskonInput.value) || 0;
+              const totalBaru = totalAwal + diskonAwal - diskonBaru;
+
+              totalInput.value = totalBaru >= 0 ? totalBaru : 0;
+          });
+      });
+    </script>
+
+</section>
 <?php
 require_once '../layout/_bottom.php';
 ?>+

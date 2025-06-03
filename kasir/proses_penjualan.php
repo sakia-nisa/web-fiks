@@ -9,7 +9,6 @@ $id_user = $_SESSION['id_user'] ?? null;
 try {
     mysqli_autocommit($connection, false);
     $id_pelanggan = null;
-    
     $cabang = mysqli_real_escape_string($connection, trim($_POST['cabang'] ?? ''));
     $statusPelanggan = mysqli_real_escape_string($connection, $_POST['statusPelanggan'] ?? '');
     $tanggal_masuk = mysqli_real_escape_string($connection, $_POST['tanggal_masuk'] ?? '');
@@ -90,8 +89,8 @@ try {
     }
 
     //Memasukkan Orderan
-    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, cash, total, id_user)
-                        VALUES ('$id_pelanggan', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$cash', '$total', '$id_user')";
+    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, id_user, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, cash, total)
+                        VALUES ('$id_pelanggan', '$id_user', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$cash', '$total')";
 
     if (!mysqli_query($connection, $insertPenjualan)) {
         throw new Exception('Gagal menyimpan data penjualan: ' . mysqli_error($connection));

@@ -3,13 +3,13 @@ require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
 $result = mysqli_query($connection, "
-  SELECT 
-    penjualan.*, 
-    pelanggan.nama AS nama_pelanggan, 
-    cabang.nama_cabang 
+  SELECT penjualan.*, penjualan_detail.estimasi_pengambilan, pelanggan.nama
   FROM penjualan
+  JOIN penjualan_detail ON penjualan.id_penjualan = penjualan_detail.id_penjualan
   JOIN pelanggan ON penjualan.id_pelanggan = pelanggan.id_pelanggan
-  JOIN cabang ON penjualan.cabang = cabang.nama_cabang
+  WHERE penjualan_detail.estimasi_pengambilan IS NOT NULL 
+  AND penjualan_detail.status != 'selesai'
+  ORDER BY penjualan_detail.estimasi_pengambilan DESC
 ");
 ?>
 
@@ -42,8 +42,8 @@ $result = mysqli_query($connection, "
                 <?php while ($data = mysqli_fetch_array($result)) : ?>
                   <tr>
                     <td><?= $data['id_penjualan'] ?></td>
-                    <td><?= $data['nama_pelanggan'] ?></td>
-                    <td><?= $data['nama_cabang'] ?></td>
+                    <td><?= $data['nama'] ?></td>
+                    <td><?= $data['cabang'] ?></td>
                     <td><?= $data['tanggal_masuk'] ?></td>
                     <td><?= $data['jumlah_pakaian'] ?></td>
                     <td><?= ucfirst($data['pembayaran']) ?></td>
@@ -56,8 +56,8 @@ $result = mysqli_query($connection, "
                         <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
                         <i class="fas fa-edit"></i>
                       </a>
-                        <a class="btn btn-sm btn-dark " href="../penjualan/index.php?id_penjualan=<?= $data['id_penjualan'] ?>">
-                        <i class="fas fa-check"></i>
+                        <a class="btn btn-sm btn-dark" href="../penjualan/selesaikan.php?id_penjualan=<?= $data['id_penjualan'] ?>" onclick="return confirm('Tandai pesanan ini sebagai selesai?')">
+                          <i class="fas fa-check"></i></a>
                       </a>
                       </div>
                     </td>
