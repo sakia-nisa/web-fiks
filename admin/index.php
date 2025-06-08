@@ -2,12 +2,10 @@
 require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
-$sql = "SELECT DISTINCT p.id_penjualan, pl.nama AS nama_pelanggan, p.cabang, p.tanggal_masuk, 
-               p.jumlah_pakaian, p.pembayaran, p.sub_pembayaran, p.diskon, p.deposito, p.cash, p.total
+$sql = "SELECT p.id_penjualan, pl.nama AS nama_pelanggan, p.cabang, p.tanggal_masuk, 
+               p.jumlah_pakaian, p.pembayaran, p.sub_pembayaran, p.diskon, p.cash, p.total
         FROM penjualan p
-        JOIN pelanggan pl ON p.id_pelanggan = pl.id_pelanggan
-        JOIN penjualan_detail pd ON p.id_penjualan = pd.id_penjualan
-        WHERE pd.status != 'proses'";
+        JOIN pelanggan pl ON p.id_pelanggan = pl.id_pelanggan";
 $result = mysqli_query($connection, $sql);
 ?>
 

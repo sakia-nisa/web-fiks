@@ -3,7 +3,7 @@ require_once '../layout/_top.php';
 require_once '../helper/connection.php';
 
 $result = mysqli_query($connection, "
-  SELECT penjualan.*, penjualan_detail.estimasi_pengambilan, pelanggan.nama
+  SELECT penjualan.*, penjualan_detail.estimasi_pengambilan, pelanggan.nama, pelanggan.deposito AS deposito
   FROM penjualan
   JOIN penjualan_detail ON penjualan.id_penjualan = penjualan_detail.id_penjualan
   JOIN pelanggan ON penjualan.id_pelanggan = pelanggan.id_pelanggan
@@ -34,9 +34,12 @@ $result = mysqli_query($connection, "
                   <th>Pembayaran</th>
                   <th>Sub Pembayaran</th>
                   <th>Diskon</th>
+                  <th>Deposito</th>
                   <th>Cash</th>
                   <th>Total</th>
-                  <th style="width: 150">Aksi</th>
+                  <?php if ($_SESSION['role'] != 'admin') : ?>
+                    <th style="width: 150">Aksi</th>
+                  <?php endif; ?>
                 </tr>
               </thead>
               <tbody>
@@ -47,22 +50,25 @@ $result = mysqli_query($connection, "
                     <td><?= $data['cabang'] ?></td>
                     <td><?= $data['tanggal_masuk'] ?></td>
                     <td><?= $data['jumlah_pakaian'] ?></td>
-                    <td><?= $data['pembayaran']?></td>
+                    <td><?= $data['pembayaran'] ?></td>
                     <td><?= $data['sub_pembayaran'] ?></td>
                     <td><?= $data['diskon'] ?></td>
+                    <td><?= $data['deposito'] ?></td>
                     <td><?= $data['cash'] ?></td>
                     <td><?= $data['total'] ?></td>
-                    <td>
-                      <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-                        <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
-                        <i class="fas fa-edit"></i>
-                      </a>
-                      <a class="btn btn-sm btn-dark" href="../penjualan/selesaikan.php?id_penjualan=<?= $data['id_penjualan'] ?>" onclick="return confirm('Tandai pesanan ini sebagai selesai?')">
-                        <i class="fas fa-check"></i>
-                      </a>
-                      </div>
-                    </td>
 
+                    <?php if ($_SESSION['role'] != 'admin') : ?>
+                      <td>
+                        <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                          <a class="btn btn-sm btn-info mb-md-0 mb-1" href="edit.php?id_penjualan=<?= $data['id_penjualan'] ?>">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <a class="btn btn-sm btn-dark" href="../penjualan/selesaikan.php?id_penjualan=<?= $data['id_penjualan'] ?>" onclick="return confirm('Tandai pesanan ini sebagai selesai?')">
+                            <i class="fas fa-check"></i>
+                          </a>
+                        </div>
+                      </td>
+                    <?php endif; ?>
                   </tr>
                 <?php endwhile; ?>
               </tbody>

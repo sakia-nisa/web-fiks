@@ -4,8 +4,8 @@ require_once '../helper/connection.php';
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) die('ID tidak valid!');
 
-// Ambil data penjualan
-$q = mysqli_query($connection, "SELECT penjualan.*, pelanggan.nama, pelanggan.nomor_telepon, pelanggan.alamat 
+// Ambil data penjualan termasuk deposit
+$q = mysqli_query($connection, "SELECT penjualan.*, pelanggan.nama, pelanggan.nomor_telepon, pelanggan.alamat, pelanggan.deposito 
     FROM penjualan 
     LEFT JOIN pelanggan ON penjualan.id_pelanggan = pelanggan.id_pelanggan 
     WHERE penjualan.id_penjualan = '$id'");
@@ -33,6 +33,7 @@ while ($row = mysqli_fetch_assoc($q2)) $details[] = $row;
         .center { text-align: center; }
         .no-border { border: none; }
         .btn-print { margin: 10px 0; display: block; width: 100%; }
+        .total-section { background-color: #f8f9fa; }
     </style>
   </head>
   <body>
@@ -59,12 +60,13 @@ while ($row = mysqli_fetch_assoc($q2)) $details[] = $row;
         </tr>
         <?php endforeach; ?>
     </table>
-    <table>
+    <table class="total-section">
         <tr><td class="right">Jumlah Pakaian</td><td class="right"><?= $data['jumlah_pakaian'] ?></td></tr>
-        <tr><td class="right">Diskon</td><td class="right">Rp <?= number_format($data['diskon'], 0, ',', '.') ?></td></tr>
-        <tr><td class="right">Total</td><td class="right"><b>Rp <?= number_format($data['total'], 0, ',', '.') ?></b></td></tr>
+        <tr><td class="right">Subtotal</td><td class="right">Rp <?= number_format($data['total'] + $data['diskon'] + $data['deposito'], 0, ',', '.') ?></td></tr>
+        <tr><td class="right">Diskon</td><td class="right">- Rp <?= number_format($data['diskon'], 0, ',', '.') ?></td></tr>
+        <tr><td class="right">Potongan Deposit</td><td class="right">- Rp <?= number_format($data['deposito'], 0, ',', '.') ?></td></tr>
+        <tr><td class="right"><b>Total</b></td><td class="right"><b>Rp <?= number_format($data['total'], 0, ',', '.') ?></b></td></tr>
         <tr><td class="right">Cash</td><td class="right">Rp <?= number_format($data['cash'], 0, ',', '.') ?></td></tr>
-        <tr><td class="right">Kembalian</td><td class="right">Rp <?= number_format($data['cash'] - $data['total'], 0, ',', '.') ?></td></tr>
     </table>
     <center>
         <a href="kirim_struk.php?id=<?= $id ?>" class="btn btn-primary">Kirim Struk</a>

@@ -16,6 +16,7 @@ try {
     $jumlah_pakaian = intval($_POST['jumlah_pakaian'] ?? 0);
     $pembayaran = mysqli_real_escape_string($connection, $_POST['pembayaran'] ?? '');
     $sub_pembayaran = mysqli_real_escape_string($connection, $_POST['sub_pembayaran'] ?? '');
+    $deposito = floatval($_POST['deposito'] ?? 0);
     $diskon = floatval($_POST['diskon'] ?? 0);
     $cash = floatval($_POST['cash'] ?? 0);
     $total = floatval($_POST['total'] ?? 0);
@@ -24,36 +25,43 @@ try {
     $servis = $_POST['servis'] ?? [];
     $berat = $_POST['berat'] ?? [];
 
+    if ($deposito > ($total + $diskon)) {throw new Exception('Deposito tidak boleh melebihi total harga!');}
     if (empty($cabang)) throw new Exception('Cabang tidak boleh kosong!');
     if (empty($tanggal_masuk)) throw new Exception('Tanggal masuk tidak boleh kosong!');
     if ($jumlah_pakaian <= 0) throw new Exception('Jumlah pakaian harus lebih dari 0!');
     if (empty($servis)) throw new Exception('Pilih minimal satu layanan!');
     if (empty($pembayaran) || empty($sub_pembayaran)) throw new Exception('Pilih metode pembayaran!');
 
-    if ($statusPelanggan === 'lama') {
+        if ($statusPelanggan === 'lama') {
         $nama = mysqli_real_escape_string($connection, trim($_POST['namaLama'] ?? ''));
         $id_pelanggan = intval($_POST['id_pelanggan'] ?? 0);
 
         if ($id_pelanggan > 0 && !empty($nama)) {
-            $checkPelanggan = mysqli_query($connection, "SELECT id_pelanggan FROM pelanggan WHERE id_pelanggan = '$id_pelanggan' AND nama = '$nama'");
+            $checkPelanggan = mysqli_query($connection, "SELECT id_pelanggan, deposito FROM pelanggan WHERE id_pelanggan = '$id_pelanggan' AND nama = '$nama'");
             if (mysqli_num_rows($checkPelanggan) == 0) {
                 throw new Exception('Pelanggan tidak ditemukan!');
             }
 
-            // Cek deposit jika metode deposit
-            if ($sub_pembayaran === 'deposit') {
-                $checkDeposit = mysqli_query($connection, "SELECT deposit FROM pelanggan WHERE id_pelanggan = '$id_pelanggan'");
-                $pelangganData = mysqli_fetch_assoc($checkDeposit);
-                $deposit = floatval($pelangganData['deposit'] ?? 0);
-
-                if ($deposit < $total) {
-                    throw new Exception('Deposit tidak mencukupi! Saldo: Rp ' . number_format($deposit, 0, ',', '.'));
-                }
-
-                $new_deposit = $deposit - $total;
-                $updateDeposit = mysqli_query($connection, "UPDATE pelanggan SET deposit = '$new_deposit' WHERE id_pelanggan = '$id_pelanggan'");
-                if (!$updateDeposit) {
-                    throw new Exception('Gagal memperbarui deposit: ' . mysqli_error($connection));
+            $pelangganData = mysqli_fetch_assoc($checkPelanggan);
+            $saldo_deposito = floatval($pelangganData['deposito'] ?? 0);
+            
+            // Hanya proses jika menggunakan deposit dan saldo mencukupi
+            if ($sub_pembayaran === 'deposito') {
+                if ($saldo_deposito <= 0) {
+                    // Jika tidak ada deposit, anggap deposit yang digunakan = 0
+                    $deposito = 0;
+                } else {
+                    // Gunakan deposit yang tersedia
+                    $potongan = min($total, $saldo_deposito);
+                    $deposito = $potongan;
+                    $total -= $potongan;
+                    
+                    // Update saldo deposit pelanggan
+                    $new_deposito = $saldo_deposito - $potongan;
+                    $updateDeposito = mysqli_query($connection, "UPDATE pelanggan SET deposito = '$new_deposito' WHERE id_pelanggan = '$id_pelanggan'");
+                    if (!$updateDeposito) {
+                        throw new Exception('Gagal memperbarui deposito: ' . mysqli_error($connection));
+                    }
                 }
             }
         } else {
@@ -89,9 +97,9 @@ try {
         }
     }
 
-    //Memasukkan Orderan
-    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, cash, total, id_user)
-                        VALUES ('$id_pelanggan', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$cash', '$total', '$id_user')";
+   // Memasukkan Orderan
+    $insertPenjualan = "INSERT INTO penjualan (id_pelanggan, cabang, tanggal_masuk, jumlah_pakaian, pembayaran, sub_pembayaran, diskon, deposito, cash, total, id_user)
+                        VALUES ('$id_pelanggan', '$cabang', '$tanggal_masuk', '$jumlah_pakaian', '$pembayaran', '$sub_pembayaran', '$diskon', '$deposito', '$cash', '$total', '$id_user')";
 
     if (!mysqli_query($connection, $insertPenjualan)) {
         throw new Exception('Gagal menyimpan data penjualan: ' . mysqli_error($connection));

@@ -1,27 +1,46 @@
 <?php
 require_once 'helper/connection.php';
 session_start();
+
 if (isset($_POST['submit'])) {
   $username = $_POST['username'];
   $password = $_POST['password'];
 
-  //$sql = "SELECT * FROM login WHERE username='$username' and password='$password' LIMIT 1";
-  $sql = "SELECT * FROM users WHERE username='$username'";
-
+  $sql = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
   $result = mysqli_query($connection, $sql);
-  $row = mysqli_fetch_assoc($result);
-  var_dump($row);
 
-  if ((mysqli_num_rows($result) === 1) && ($password==$row['password'])) {
-    $_SESSION['login'] = $row;
-    $_SESSION['id_user'] = $row['id_user'];
-    header('Location: dashboard/index.php');
-    exit;
+  if ($result && mysqli_num_rows($result) === 1) {
+    $row = mysqli_fetch_assoc($result);
+
+    // Jika password tidak di-hash: pakai ini
+    if ($password == $row['password']) {
+    // Jika password sudah di-hash: pakai password_verify()
+    // if (password_verify($password, $row['password'])) {
+
+      $_SESSION['login'] = $row;
+      $_SESSION['id_user'] = $row['id_user'];
+      $_SESSION['role'] = $row['role'];
+      $_SESSION['id_cabang'] = $row['id_cabang'];
+      $_SESSION['id_pegawai'] = $row['id_pegawai'];
+
+      // Arahkan berdasarkan role
+      if ($row['role'] == 'kasir') {
+        header('Location: dashboard/index.php');
+      } else if ($row['role'] == 'admin') {
+        header('Location: admin/dashboard_admin.php');
+      } else {
+        echo "<script>alert('Role tidak dikenali!');</script>";
+      }
+      exit;
+    } else {
+      $error = true;
+    }
   } else {
     $error = true;
   }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

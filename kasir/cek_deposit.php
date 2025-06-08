@@ -1,20 +1,29 @@
 <?php
 require_once '../helper/connection.php';
 
-header('Content-Type: application/json');
+if (isset($_GET['nama'])) {
+    $nama = mysqli_real_escape_string($connection, $_GET['nama']);
+    
+    // Cari ID pelanggan berdasarkan nama
+    $pelanggan = mysqli_query($connection, "SELECT id_pelanggan FROM pelanggan WHERE nama = '$nama' LIMIT 1");
+    if ($row = mysqli_fetch_assoc($pelanggan)) {
+        $id = $row['id_pelanggan'];
 
-if (!isset($_GET['id_pelanggan'])) {
-    echo json_encode(['saldo_deposit' => 0]);
-    exit;
+        // Hitung total saldo deposito
+        $deposit = mysqli_query($connection, "SELECT 
+            COALESCE(SUM(deposit_masuk),0) - COALESCE(SUM(deposit_keluar),0) as saldo 
+            FROM deposit WHERE id_pelanggan = '$id'");
+
+        $d = mysqli_fetch_assoc($deposit);
+        $saldo = $d['saldo'];
+
+        echo json_encode([
+            'ada' => $saldo > 0,
+            'deposito' => number_format($saldo, 2),
+            'id_pelanggan' => $id
+        ]);
+    } else {
+        echo json_encode(['ada' => false]);
+    }
 }
-
-$id_pelanggan = intval($_GET['id_pelanggan']);
-$query = "SELECT SUM(deposit_masuk - deposit_keluar) as saldo_deposit 
-          FROM deposit 
-          WHERE id_pelanggan = $id_pelanggan";
-$result = mysqli_query($connection, $query);
-$data = mysqli_fetch_assoc($result);
-
-echo json_encode([
-    'saldo_deposit' => floatval($data['saldo_deposit'] ?? 0)
-]);
+?>

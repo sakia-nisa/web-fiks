@@ -8,6 +8,8 @@ $layanan = mysqli_query($connection, "SELECT * FROM layanan");
 
 // Ambil data pelanggan lama
 $pelanggan_lama = mysqli_query($connection, "SELECT * FROM pelanggan");
+$deposito = mysqli_query($connection, "SELECT id_pelanggan, nama, deposito FROM pelanggan");
+$customers = mysqli_fetch_all($deposito, MYSQLI_ASSOC);
 ?>
 
 <section class="section">
@@ -159,7 +161,6 @@ $pelanggan_lama = mysqli_query($connection, "SELECT * FROM pelanggan");
             <option value="gopay">GoPay</option>
             <option value="tunai">Tunai</option>
             <option value="bca">BCA EC</option>
-            <option value="deposit">Deposit</option>
           </select>
         </div>
       </div>
@@ -168,6 +169,10 @@ $pelanggan_lama = mysqli_query($connection, "SELECT * FROM pelanggan");
         <div class="col-md-4">
           <label class="form-label">Diskon</label>
           <input type="number" name="diskon" id="diskon" class="form-control" value="0" min="0" step="0.01">
+        </div>
+        <div class="form-group" id="deposito-container">
+          <label for="deposito" class="form-label">Deposito</label>
+          <input type="text" class="form-control" id="deposito" name="deposito" readonly>
         </div>
         <div class="col-md-4">
           <label class="form-label">Cash</label>
@@ -331,6 +336,7 @@ $pelanggan_lama = mysqli_query($connection, "SELECT * FROM pelanggan");
       document.getElementById('nama_baru').required = false;
       document.getElementById('telepon').required = false;
       document.getElementById('alamat').required = false;
+      
     } else {
       pelangganLamaForm.style.display = 'none';
       pelangganBaruForm.style.display = 'block';
@@ -372,6 +378,46 @@ $pelanggan_lama = mysqli_query($connection, "SELECT * FROM pelanggan");
 
   // Update total saat diskon berubah
   document.getElementById('diskon').addEventListener('input', updateTotal);
+
+  // Data deposit pelanggan
+const customers = <?= json_encode($customers) ?>;
+const depositoMap = {};
+customers.forEach(c => {
+    depositoMap[c.nama] = parseFloat(c.deposito);
+});
+
+// Elemen input
+const namaInput = document.getElementById('namaLama');
+const depositoInput = document.getElementById('deposito');
+const totalHargaInput = document.getElementById('totalHarga');
+
+// Update total harga termasuk deposit
+function updateTotal() {
+    const totalInputs = document.querySelectorAll('.total-input');
+    let subtotal = 0;
+    totalInputs.forEach(input => {
+        subtotal += parseFloat(input.value || 0);
+    });
+
+    const diskon = parseFloat(document.getElementById('diskon').value || 0);
+    const deposito = parseFloat(depositoInput.value || 0);
+    
+    // Hitung total akhir (subtotal - diskon - deposit, minimal 0)
+    const totalAkhir = Math.max(0, subtotal - diskon - deposito);
+    totalHargaInput.value = totalAkhir.toFixed(2);
+}
+    // Update deposit saat nama pelanggan berubah
+    function updateDeposito() {
+      const name = namaInput.value.trim();
+      const deposito = depositoMap[name] || 0;
+      depositoInput.value = deposito.toFixed(2);
+      updateTotal(); // Trigger perhitungan ulang total
+      }
+      
+      // Event listeners
+      namaInput.addEventListener('input', updateDeposito);
+      document.getElementById('diskon').addEventListener('input', updateTotal);
+      window.addEventListener('load', updateTotal);
 
   // Validasi form sebelum submit
   document.getElementById('penjualanForm').addEventListener('submit', function(e) {

@@ -7,7 +7,8 @@ $pelanggan_terdaftar = mysqli_fetch_assoc($q_total_pelanggan)['total'];
 $today = date('Y-m-d');
 $q_pelanggan_hari_ini = mysqli_query($connection, "SELECT COUNT(*) as total FROM penjualan WHERE DATE(tanggal_masuk) = '$today'");
 $pelanggan_hari_ini = mysqli_fetch_assoc($q_pelanggan_hari_ini)['total'];
-$deposit = $deposit = mysqli_query($connection, "SELECT deposit.*, pelanggan.nama FROM deposit JOIN pelanggan ON deposit.id_pelanggan = pelanggan.id_pelanggan");
+// $deposit = $deposit = mysqli_query($connection, "SELECT deposit.*, pelanggan.nama FROM deposit JOIN pelanggan ON deposit.id_pelanggan = pelanggan.id_pelanggan");
+$deposit = mysqli_query($connection, "SELECT nama, deposito FROM pelanggan WHERE deposito > 0");
 $pegawai = mysqli_query($connection, "
   SELECT 
     pegawai.*, 
@@ -20,8 +21,9 @@ $pegawai = mysqli_query($connection, "
 ?>
 
 <section class="section">
-  <div class="section-header">
+  <div class="section-header d-flex justify-content-between">
     <h1>Dashboard</h1>
+    <a href="../deposit/tambah_deposit.php" class="btn btn-primary">+ Tambah Deposit</a>
   </div>
   <div class="container mt-4">
   <div class="row mb-4">
@@ -51,7 +53,6 @@ $pegawai = mysqli_query($connection, "
           <tr>
             <th>Nama</th>
             <th>Deposit Masuk</th>
-            <th>Deposit Keluar</th>
             <th>Dilihat</th>
           </tr>
         </thead>
@@ -59,8 +60,7 @@ $pegawai = mysqli_query($connection, "
           <?php while ($d = mysqli_fetch_assoc($deposit)) { ?>
             <tr>
               <td><?php echo $d['nama']; ?></td>
-              <td><?php echo $d['deposit_masuk']; ?></td>
-              <td><?php echo $d['deposit_keluar']; ?></td>
+              <td><?php echo $d['deposito']; ?></td>
               <td><i class="fa fa-eye"></i></td>
             </tr>
           <?php } ?>
